@@ -1,0 +1,22 @@
+% !TEX root = main.tex
+% !TEX program = xelatex
+\documentclass{coursepaper}
+
+% 修改论文信息；不需要的作者信息可以删掉。
+\title{高精度数值模拟及其在泵设计中的应用}
+\author{姓名：孙嘉骏\quad 学号：22627171\\课程：待填写\quad 任课教师：待填写}
+\date{2026年10月20日}
+
+\begin{document}
+\maketitle
+
+\section*{摘要}
+泵设计的数值计算正从平均水力性能评价扩展到压力脉动、激振力及噪声预测。本文选取近十年国内外代表性研究，区分高阶离散与高保真物理建模，梳理LES及混合RANS/LES方法在分离流动、动静干涉、叶顶空化和声振耦合中的应用。模型名称和平均扬程吻合不足以说明局部非定常量的精度，验证应围绕具体设计目标展开。最后讨论机器学习、格子玻尔兹曼及量子计算的适用边界，为常规泵CFD流程向非定常机理分析扩展提供参考。
+
+\noindent 关键词：泵设计；高精度数值模拟；大涡模拟；压力脉动；空化；水动力噪声
+
+\input{chapters/content}
+\input{chapters/figures}
+
+\printbibliography[title={参考文献}]
+\end{document}

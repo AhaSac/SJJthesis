@@ -1,0 +1,1 @@
+series_id,case_id,study_axis,model,N_cells,dt_s,sample_dt_s,n_rpm,Z,retained_T_s,Welch_segment_L,Welch_overlap_samples,f_low_Hz,f_high_Hz,BPF_halfband_Hz,H_mean_m,Fx_BPF_band_rms_N,p_broadband_rms_Pa,reference_case_id,H_rel_difference_pct,Fx_BPF_rel_difference_pct,p_broadband_rel_difference_pct,source_file,notes

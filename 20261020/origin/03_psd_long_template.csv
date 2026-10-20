@@ -1,0 +1,1 @@
+case_id,monitor_id,theta_deg,f_Hz,shaft_order,PSD_p_Pa2_per_Hz,n_rpm,Z,sample_dt_s,retained_T_s,segment_L,overlap_samples,window,detrend,scaling,source_file

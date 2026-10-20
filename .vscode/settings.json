@@ -1,26 +1,37 @@
 {
     "latex-workshop.latex.recipes": [
         {
-            "name": "latexmk (latexmkrc)",
+            "name": "XeLaTeX + Biber (latexmk)",
             "tools": [
-                "latexmk_rconly"
-            ]
-        },
-        {
-            "name": "latexmk",
-            "tools": [
-                "latexmk"
-            ]
-        },
-        {
-            "name": "xelatex -> bibtex -> xelatex * 2",
-            "tools": [
-                "xelatex",
-                "bibtex",
-                "xelatex",
-                "xelatex"
+                "paper-latexmk"
             ]
         }
     ],
-    "latex-workshop.latex.outDir": "%DIR%/out"
+    "latex-workshop.latex.outDir": "C:/Users/AhaSac/Desktop/pump/SJJthesis/20261020/build/%DOCFILE%",
+    "files.encoding": "utf8",
+    "editor.wordWrap": "on",
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.recipe.default": "first",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.latex.tools": [
+        {
+            "name": "paper-latexmk",
+            "command": "latexmk",
+            "args": [
+                "-norc",
+                "-cd",
+                "-xelatex",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-halt-on-error",
+                "-outdir=%OUTDIR%",
+                "%DOC%"
+            ],
+            "env": {
+                "LC_ALL": "C",
+                "LANG": "C"
+            }
+        }
+    ]
 }

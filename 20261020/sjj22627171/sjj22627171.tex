@@ -1,0 +1,181 @@
+% !TEX root = sjj22627171.tex
+% 编译：latexmk -norc -xelatex '-outdir=../build/sjj22627171' sjj22627171.tex
+% 请使用包含Biber的完整编译流程；不要添加仅运行xelatex的program注释。
+% 字体、格式、摘要和正文均在本文件；文献库为同目录reference.bib。
+\documentclass[UTF8,a4paper,zihao=-4,fontset=none,oneside]{ctexart}
+
+\usepackage{iftex}
+\RequireXeTeX
+\usepackage{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage[backend=biber,style=gb7714-2015,sorting=none,doi=true,url=true]{biblatex}
+\usepackage[hidelinks,unicode]{hyperref}
+
+% 中文统一使用 Windows 宋体，标题不额外加粗。
+% 保留原模板的西文 Times New Roman；数学公式使用标准数学字体。
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{SimSun}
+\setCJKmonofont{SimSun}
+\setCJKfamilyfont{zhsong}{SimSun}
+\providecommand{\songti}{\CJKfamily{zhsong}}
+\renewcommand{\familydefault}{\rmdefault}
+
+\geometry{a4paper,margin=2.5cm}
+\linespread{1.5}
+\setlength{\parindent}{2\ccwd}
+\setlength{\parskip}{0pt}
+\pagestyle{plain}
+\setcounter{secnumdepth}{3}
+\graphicspath{{./}}
+\addbibresource{reference.bib}
+
+% 大标题：论文总标题宋体三号（16 bp）。
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begingroup
+    \centering
+    {\normalfont\songti\zihao{3}\@title\par}
+    \vspace{0.8\baselineskip}
+    {\normalfont\songti\zihao{-4}\@author\par}
+    \vspace{0.25\baselineskip}
+    {\normalfont\songti\zihao{-4}\@date\par}
+    \vspace{0.8\baselineskip}
+  \endgroup
+}
+\makeatother
+
+% 小标题：正文一级、二级、三级标题均为宋体四号（14 bp）。
+\ctexset{
+  section = {
+    format = \normalfont\songti\zihao{4}\raggedright,
+    number = \arabic{section},
+    aftername = \quad,
+    beforeskip = 12bp,
+    afterskip = 6bp,
+    afterindent = true
+  },
+  subsection = {
+    format = \normalfont\songti\zihao{4}\raggedright,
+    number = \arabic{section}.\arabic{subsection},
+    aftername = \quad,
+    beforeskip = 10bp,
+    afterskip = 4bp,
+    afterindent = true
+  },
+  subsubsection = {
+    format = \normalfont\songti\zihao{4}\raggedright,
+    number = \arabic{section}.\arabic{subsection}.\arabic{subsubsection},
+    aftername = \quad,
+    beforeskip = 8bp,
+    afterskip = 4bp,
+    afterindent = true
+  }
+}
+
+% 摘要、图表说明和参考文献正文也统一为宋体小四号（12 bp）。
+\renewenvironment{abstract}
+  {\section*{摘要}\normalfont\songti\zihao{-4}}
+  {\par}
+\DeclareCaptionFont{coursebody}{\normalfont\songti\zihao{-4}}
+\captionsetup{font=coursebody,labelfont=normalfont,labelsep=quad}
+\renewcommand{\bibfont}{\normalfont\songti\zihao{-4}}
+\defbibheading{bibliography}[参考文献]{\section*{#1}}
+\AtBeginDocument{\normalfont\songti\zihao{-4}}
+
+
+% 修改论文信息；不需要的作者信息可以删掉。
+\title{高精度数值模拟及其在泵设计中的应用}
+\author{姓名：孙嘉骏\quad 学号：22627171\\课程：待填写\quad 任课教师：待填写}
+\date{2026年10月20日}
+
+\begin{document}
+\maketitle
+
+\section*{摘要}
+泵设计的数值计算正从平均水力性能评价扩展到压力脉动、激振力及噪声预测。本文选取近十年国内外代表性研究，区分高阶离散与高保真物理建模，梳理LES及混合RANS/LES方法在分离流动、动静干涉、叶顶空化和声振耦合中的应用。模型名称和平均扬程吻合不足以说明局部非定常量的精度，验证应围绕具体设计目标展开。最后讨论机器学习、格子玻尔兹曼及量子计算的适用边界，为常规泵CFD流程向非定常机理分析扩展提供参考。
+
+\noindent 关键词：泵设计；高精度数值模拟；大涡模拟；压力脉动；空化；水动力噪声
+
+% 综述正文；可点击的 DOI/原文网址见参考文献。
+
+\section{从水力性能计算到非定常机理解析}
+
+泵设计中的计算流体力学（CFD）通常从扬程、效率和扭矩入手。这些量便于试验测量，也适合评价叶轮改型，但它们反映的是流场的整体作用。局部回流、尾迹和间隙泄漏即使存在偏差，也可能得到接近的平均扬程。当设计目标转向激振力、压力脉动和噪声时，必须进一步判断流动发生在哪里、以什么频率变化，以及这些变化怎样传递到泵体和外部介质。
+
+高精度数值模拟因此包含两个相互关联的要求：数值方法能否保留需要的时空变化，物理模型能否描述对应的流动机制。Han等的综述将混合雷诺平均与大涡模拟作为水力机械研究的重要路线，讨论了其在涡结构、空化和噪声问题中的用途，也指出了模型与计算成本的限制\cite{Han2024HybridReview}。本文选取2017年以来国内外代表性研究，围绕平均性能、非定常载荷和声学预测展开评述，重点讨论这些方法怎样服务于泵设计。
+
+\section{高阶离散与高保真模型各自解决什么问题}
+
+高阶精度描述离散误差随网格尺度减小的变化，高保真则涉及被解析和被建模的物理尺度。两者不能直接等同。Zhang等介绍了紧致差分以及间断伽辽金与有限体积混合方法，指出传统低阶离散的数值耗散会削弱多尺度涡动和声波传播，低耗散高阶方法有助于保留这些细节\cite{Zhang2017HighOrder}。这类进展解释了高阶算法的价值，但其在其他流动中的成功仍需经过旋转接口、复杂间隙和泵工况的检验。
+
+雷诺平均方法（RANS）通过统计建模处理湍流，适合批量比较水力性能。非定常雷诺平均方法（URANS）可以计算周期性动静干涉，但不会自动解析全部湍流脉动。大涡模拟（LES）直接求解较大的涡，将较小尺度的作用交给亚格子模型。直接数值模拟（DNS）则需要解析至耗散尺度，工程高雷诺数整泵的成本通常难以承受。近壁区域尤其昂贵，Bose和Park对壁面建模LES的评述说明，减少近壁计算量仍需要处理壁面模型与外层解析之间的关系\cite{Bose2018WMLES}。
+
+分离涡模拟及其延迟形式（DES、DDES）在近壁区使用RANS处理，在适宜区域解析大尺度非定常结构，为工业泵提供了折中路线\cite{Han2024HybridReview}。不过，选择LES或DDES只确定了模型框架。网格、时间推进、接口插值和采样长度若不足，软件中更换模型名称并不能保证目标量达到更高精度。
+
+还应区分数值误差与模型误差。Xiao和Cinnella评述了RANS模型参数及结构不确定度，说明闭合关系本身也会影响预测\cite{Xiao2019Uncertainty}。网格加密主要检查离散结果的变化，无法单独消除湍流模型偏差。试验与模拟的差别还可能来自入口条件、间隙尺寸和测量误差，因此“网格无关”应作为数值检查，而不是整套模型已获验证的结论。
+
+\section{从局部分离识别走向压力脉动与激振力控制}
+
+Kye等对蜗壳式离心泵开展LES，分析了偏工况下的回流、分离及叶轮与蜗壳的干涉，说明尾缘脱落涡和泄漏流共同参与非定常损失\cite{Kye2018VoluteLES}。这类研究将性能曲线上的变化对应到具体流动区域，使设计者能够区分叶片负荷、流道分离和间隙泄漏的影响。
+
+Ren等采用改进延迟分离涡模拟（IDDES），结合粒子图像测速（PIV）考察离心泵叶轮分离，并据此调整叶片几何\cite{Ren2019SeparationIDDES}。其改型分析给出的设计流量点水力效率由71.50\%变为81.41\%，扬程则由11.68~m变为11.43~m。这说明流动诊断能够支持有取舍的几何改进。上述数值表示特定叶轮的改型效果，不能用于计算IDDES相对于RANS的精度增益，也不能直接解释为整泵总效率变化。
+
+压力脉动研究进一步要求分辨动静部件之间的作用。Posa比较了导叶进口角及径向间距的影响，发现该算例中叶轮出口至导叶前缘的间距对脉动的影响更为突出\cite{Posa2021DiffuserAngle}。Li等用DDES追踪带导叶离心泵内的涡结构，发现叶轮尾迹与导叶作用会增强局部压力脉动，导叶尾缘脱落的大尺度涡还会继续与隔舌干涉\cite{Li2022VorticalDDES}。两项研究分别从几何参数和流动演化说明，脉动控制需要同时考虑干涉强度及其传递路径。
+
+这种认识也适用于激振力。Cui等研究实际尺寸多级离心泵，讨论了级间流动差异以及背靠背叶轮、双隔舌布置对流体力的影响\cite{Cui2022ExcitingForces}。但外特性试验与计算相符，只能验证相应的性能量。激振力的幅值、相位及频谱仍需动态载荷或结构响应等独立证据，不能直接沿用扬程误差作为其精度说明。
+
+从力的构成看，不同壁面区域的压力经过方向投影和面积积分后才形成合力。局部脉动较大时，各区域对合力的贡献仍可能因方向和相位关系而部分抵消。因此，仅看某个监测点的压力峰值，或凭涡量云图判断振动强弱，都缺少空间关联证据。设计比较宜同时保留壁压分布与合力时序。
+
+\section{叶顶空化与噪声预测为何提出更细的要求}
+
+“叶缘流速”需要按几何位置和物理过程进一步区分：叶顶间隙对应泄漏涡，尾缘涉及尾迹与脱涡，叶轮出口和隔舌之间则存在周期性干涉。程怀玉等以NACA0009水翼为对象，将LES与考虑气核效应的欧拉—拉格朗日空化模型结合，分析了叶顶间隙中片空化与泄漏涡的耦合\cite{Cheng2021TLVCavitation}。研究说明空化会改变涡结构，间隙也影响其不稳定性。由于对象是水翼，该结论向整泵推广时还需考虑旋转、曲率和工况差别。
+
+降噪计算还要把局部流动转换成可验证的声学量。郎涛等的综述区分了离心泵的离散噪声与宽带噪声：前者通常与动静干涉及叶频谐波有关，后者涉及更广泛的非定常过程\cite{Lang2021NoiseReview}。因此，局部速度算得细并不足以确认噪声算得准，壁面压力的幅值、相干性以及声波传播条件也需要检查。
+
+在具体应用中，郎涛等将SST湍流模型的非定常流场与声学计算结合，分析单叶片离心泵的水动力噪声，发现脉动与内场噪声能量集中在低频、叶频及相应谐频\cite{Lang2022SingleBladeNoise}。He和Shao进一步考虑气液两相流及声振耦合，研究入口含气率变化下的流动与噪声响应\cite{He2021TwoPhaseNoise}。含气输运与蒸汽空化具有不同物理过程，两者不宜混用模型结论。泵内水声与泵体向空气辐射的声音也对应不同传播路径，验证时应区分流场、结构响应和声场。
+
+\section{以目标量检验精度，并审慎使用加速方法}
+
+对泵设计而言，精度检验宜随设计目标展开。以扬程和扭矩为目标时，应检查外特性及整体收敛；研究压力脉动和激振力时，还应比较主频、谐波幅值、相位及统计稳定性；涉及噪声时，则需继续核验频带能量和传播条件。Li等微型泵算例的网格表显示，不同网格下扬程系数与功率系数的变化程度并不相同\cite{Li2021PulseFlow}。这一案例可说明平均量对网格的敏感性存在差别，但它本身没有证明高频压力谱已经收敛。
+
+据此，本文建议将网格、时间步和采样时长分别检查，并保持监测位置、采样方式及频谱处理一致。PIV能够补充局部速度证据，压力传感器和声学测量则分别对应脉动与噪声目标。不同论文的网格数、误差或声压级只有在对象和定义一致时才适合比较，不能据零散数值为湍流模型排列统一精度等级。
+
+频谱分析还受到采样设计约束。若叶片数为$Z$，转速为$n$（r/min），叶频为$f_{\mathrm{BPF}}=Zn/60$。采样率至少需要满足关注频带的奈奎斯特条件，而数值时间步还要能够解析流动变化。无零填充时，原始记录时长$T$对应FFT频率间隔$1/T$；采用Welch分段平均时，频率间隔由分段时长决定。零填充只加密显示格点。延长总记录可以增加平均次数，却不能自动弥补过短分段造成的分辨率不足。上述关系说明，高频与低频研究需要分别规划时间分辨率和统计长度。
+
+人工智能的作用也应放到这条验证链中。Kochkov等在二维湍流问题中研究机器学习辅助求解，展示了粗分辨率计算的改进可能性，但其结果不能直接外推为三维旋转泵的加速比\cite{Kochkov2021MLCFD}。Xue等将物理约束数据驱动壁面模型用于格子玻尔兹曼方法（LBM），以高雷诺数槽道流研究近壁建模\cite{Xue2024LBMWall}。该工作与降低高保真模拟成本有关，但尚不是泵噪声的直接验证。Succi等对量子流体模拟的评述仍将非线性处理、状态准备和结果读出列为障碍\cite{Succi2023Quantum}。这些方向可以补充算力路线，不能替代守恒性、长期稳定性和目标量精度的检查。
+
+\section{结论}
+
+泵领域高精度模拟的价值，在于将整体性能变化解释到局部分离、动静干涉、空化和声振传递，并用相应观测量检验计算。对已有Fluent设计流程，可先以RANS筛选方案，再针对受关注的非定常机制配置尺度解析计算与试验验证。本文属于代表性文献综述，未在统一工况下复算各模型，因此不对它们给出通用精度排名。后续应用应围绕具体设计目标分配分辨率与计算资源。
+
+
+% Origin图件接口：将制作好的PDF按以下文件名放入即可自动插入。
+% 暂无图件时不插入占位框；图2、3尚需真实仿真时序，不预先插入。
+
+\IfFileExists{fig01_grid.pdf}{%
+  图\ref{fig:grid-sensitivity}整理了微型离心泵平均性能系数的网格敏感性，展示不同目标量随网格变化的差别。
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.97\linewidth]{fig01_grid.pdf}
+    \caption{微型离心泵平均性能系数的网格敏感性。据Li等\cite{Li2021PulseFlow}表3整理；相对差异以最细网格为参照，不代表真值误差或高频谱收敛。}
+    \label{fig:grid-sensitivity}
+  \end{figure}
+}{}
+
+\IfFileExists{fig04_redesign.pdf}{%
+  图\ref{fig:redesign}对比了文献中叶轮改型前后的数值性能，反映设计改进在不同流量下的差异。
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.97\linewidth]{fig04_redesign.pdf}
+    \caption{基于流动诊断的叶轮改型前后数值性能。据Ren等\cite{Ren2019SeparationIDDES}表3整理；效率为水力效率，不表示模型精度比较或噪声变化。}
+    \label{fig:redesign}
+  \end{figure}
+}{}
+
+\printbibliography[title={参考文献}]
+\end{document}

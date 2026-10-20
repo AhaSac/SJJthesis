@@ -1,0 +1,231 @@
+         高精度数值模拟及其在泵设计中的应用
+
+              姓名：孙嘉骏 学号：22627171
+             课程：待填写 任课教师：待填写
+
+                 2026 年 10 月 20 日
+
+
+
+摘要
+    泵设计的数值计算正从平均水力性能评价扩展到压力脉动、激振力及噪声预测。本
+文选取近十年国内外代表性研究，区分高阶离散与高保真物理建模，梳理 LES 及混合
+RANS/LES 方法在分离流动、动静干涉、叶顶空化和声振耦合中的应用。模型名称和平
+均扬程吻合不足以说明局部非定常量的精度，验证应围绕具体设计目标展开。最后讨论
+机器学习、格子玻尔兹曼及量子计算的适用边界，为常规泵 CFD 流程向非定常机理分
+析扩展提供参考。
+关键词：泵设计；高精度数值模拟；大涡模拟；压力脉动；空化；水动力噪声
+
+
+1   从水力性能计算到非定常机理解析
+    泵设计中的计算流体力学（CFD）通常从扬程、效率和扭矩入手。这些量便于试验
+测量，也适合评价叶轮改型，但它们反映的是流场的整体作用。局部回流、尾迹和间隙
+泄漏即使存在偏差，也可能得到接近的平均扬程。当设计目标转向激振力、压力脉动和
+噪声时，必须进一步判断流动发生在哪里、以什么频率变化，以及这些变化怎样传递到
+泵体和外部介质。
+    高精度数值模拟因此包含两个相互关联的要求：数值方法能否保留需要的时空变
+化，物理模型能否描述对应的流动机制。Han 等的综述将混合雷诺平均与大涡模拟作为
+水力机械研究的重要路线，讨论了其在涡结构、空化和噪声问题中的用途，也指出了模
+型与计算成本的限制[1] 。本文选取 2017 年以来国内外代表性研究，围绕平均性能、非定
+常载荷和声学预测展开评述，重点讨论这些方法怎样服务于泵设计。
+
+
+2   高阶离散与高保真模型各自解决什么问题
+    高阶精度描述离散误差随网格尺度减小的变化，高保真则涉及被解析和被建模的物
+理尺度。两者不能直接等同。Zhang 等介绍了紧致差分以及间断伽辽金与有限体积混合
+方法，指出传统低阶离散的数值耗散会削弱多尺度涡动和声波传播，低耗散高阶方法有
+
+
+
+                        1
+助于保留这些细节[2] 。这类进展解释了高阶算法的价值，但其在其他流动中的成功仍需
+经过旋转接口、复杂间隙和泵工况的检验。
+    雷诺平均方法（RANS）通过统计建模处理湍流，适合批量比较水力性能。非定常
+雷诺平均方法（URANS）可以计算周期性动静干涉，但不会自动解析全部湍流脉动。大
+涡模拟（LES）直接求解较大的涡，将较小尺度的作用交给亚格子模型。直接数值模拟
+（DNS）则需要解析至耗散尺度，工程高雷诺数整泵的成本通常难以承受。近壁区域尤
+其昂贵，Bose 和 Park 对壁面建模 LES 的评述说明，减少近壁计算量仍需要处理壁面模
+型与外层解析之间的关系[3] 。
+    分离涡模拟及其延迟形式（DES、DDES）在近壁区使用 RANS 处理，在适宜区域
+解析大尺度非定常结构，为工业泵提供了折中路线[1] 。不过，选择 LES 或 DDES 只确定
+了模型框架。网格、时间推进、接口插值和采样长度若不足，软件中更换模型名称并不
+能保证目标量达到更高精度。
+    还应区分数值误差与模型误差。Xiao 和 Cinnella 评述了 RANS 模型参数及结构不
+确定度，说明闭合关系本身也会影响预测[4] 。网格加密主要检查离散结果的变化，无法
+单独消除湍流模型偏差。试验与模拟的差别还可能来自入口条件、间隙尺寸和测量误
+差，因此“网格无关”应作为数值检查，而不是整套模型已获验证的结论。
+
+
+3   从局部分离识别走向压力脉动与激振力控制
+    Kye 等对蜗壳式离心泵开展 LES，分析了偏工况下的回流、分离及叶轮与蜗壳的干
+涉，说明尾缘脱落涡和泄漏流共同参与非定常损失[5] 。这类研究将性能曲线上的变化对
+应到具体流动区域，使设计者能够区分叶片负荷、流道分离和间隙泄漏的影响。
+                          ，结合粒子图像测速（PIV）考察离心泵
+    Ren 等采用改进延迟分离涡模拟（IDDES）
+叶轮分离，并据此调整叶片几何[6] 。其改型分析给出的设计流量点水力效率由 71.50%
+变为 81.41%，扬程则由 11.68 m 变为 11.43 m。这说明流动诊断能够支持有取舍的几何
+改进。上述数值表示特定叶轮的改型效果，不能用于计算 IDDES 相对于 RANS 的精度
+增益，也不能直接解释为整泵总效率变化。
+    压力脉动研究进一步要求分辨动静部件之间的作用。Posa 比较了导叶进口角及径
+向间距的影响，发现该算例中叶轮出口至导叶前缘的间距对脉动的影响更为突出[7] 。Li
+等用 DDES 追踪带导叶离心泵内的涡结构，发现叶轮尾迹与导叶作用会增强局部压力
+脉动，导叶尾缘脱落的大尺度涡还会继续与隔舌干涉[8] 。两项研究分别从几何参数和流
+动演化说明，脉动控制需要同时考虑干涉强度及其传递路径。
+    这种认识也适用于激振力。Cui 等研究实际尺寸多级离心泵，讨论了级间流动差异
+
+
+
+                         2
+以及背靠背叶轮、双隔舌布置对流体力的影响[9] 。但外特性试验与计算相符，只能验证
+相应的性能量。激振力的幅值、相位及频谱仍需动态载荷或结构响应等独立证据，不能
+直接沿用扬程误差作为其精度说明。
+    从力的构成看，不同壁面区域的压力经过方向投影和面积积分后才形成合力。局部
+脉动较大时，各区域对合力的贡献仍可能因方向和相位关系而部分抵消。因此，仅看某
+个监测点的压力峰值，或凭涡量云图判断振动强弱，都缺少空间关联证据。设计比较宜
+同时保留壁压分布与合力时序。
+
+
+4   叶顶空化与噪声预测为何提出更细的要求
+    “叶缘流速”需要按几何位置和物理过程进一步区分：叶顶间隙对应泄漏涡，尾缘
+涉及尾迹与脱涡，叶轮出口和隔舌之间则存在周期性干涉。程怀玉等以 NACA0009 水
+翼为对象，将 LES 与考虑气核效应的欧拉—拉格朗日空化模型结合，分析了叶顶间隙
+中片空化与泄漏涡的耦合[10] 。研究说明空化会改变涡结构，间隙也影响其不稳定性。由
+于对象是水翼，该结论向整泵推广时还需考虑旋转、曲率和工况差别。
+    降噪计算还要把局部流动转换成可验证的声学量。郎涛等的综述区分了离心泵的离
+散噪声与宽带噪声：前者通常与动静干涉及叶频谐波有关，后者涉及更广泛的非定常过
+程[11] 。因此，局部速度算得细并不足以确认噪声算得准，壁面压力的幅值、相干性以及
+声波传播条件也需要检查。
+    在具体应用中，郎涛等将 SST 湍流模型的非定常流场与声学计算结合，分析单叶片
+离心泵的水动力噪声，发现脉动与内场噪声能量集中在低频、叶频及相应谐频[12] 。He 和
+Shao 进一步考虑气液两相流及声振耦合，研究入口含气率变化下的流动与噪声响应[13] 。
+含气输运与蒸汽空化具有不同物理过程，两者不宜混用模型结论。泵内水声与泵体向空
+气辐射的声音也对应不同传播路径，验证时应区分流场、结构响应和声场。
+
+
+5   以目标量检验精度，并审慎使用加速方法
+    对泵设计而言，精度检验宜随设计目标展开。以扬程和扭矩为目标时，应检查外特
+性及整体收敛；研究压力脉动和激振力时，还应比较主频、谐波幅值、相位及统计稳定
+性；涉及噪声时，则需继续核验频带能量和传播条件。Li 等微型泵算例的网格表显示，
+不同网格下扬程系数与功率系数的变化程度并不相同[14] 。这一案例可说明平均量对网
+格的敏感性存在差别，但它本身没有证明高频压力谱已经收敛。
+    据此，本文建议将网格、时间步和采样时长分别检查，并保持监测位置、采样方式
+及频谱处理一致。PIV 能够补充局部速度证据，压力传感器和声学测量则分别对应脉动
+
+
+
+                      3
+与噪声目标。不同论文的网格数、误差或声压级只有在对象和定义一致时才适合比较，
+不能据零散数值为湍流模型排列统一精度等级。
+    频谱分析还受到采样设计约束。若叶片数为 Z，转速为 n（r/min），叶频为 fBPF =
+Zn/60。采样率至少需要满足关注频带的奈奎斯特条件，而数值时间步还要能够解析流
+动变化。无零填充时，原始记录时长 T 对应 FFT 频率间隔 1/T ；采用 Welch 分段平均
+时，频率间隔由分段时长决定。零填充只加密显示格点。延长总记录可以增加平均次数，
+却不能自动弥补过短分段造成的分辨率不足。上述关系说明，高频与低频研究需要分别
+规划时间分辨率和统计长度。
+    人工智能的作用也应放到这条验证链中。Kochkov 等在二维湍流问题中研究机器学
+习辅助求解，展示了粗分辨率计算的改进可能性，但其结果不能直接外推为三维旋转泵
+的加速比[15] 。Xue 等将物理约束数据驱动壁面模型用于格子玻尔兹曼方法（LBM），以
+高雷诺数槽道流研究近壁建模[16] 。该工作与降低高保真模拟成本有关，但尚不是泵噪声
+的直接验证。Succi 等对量子流体模拟的评述仍将非线性处理、状态准备和结果读出列
+为障碍[17] 。这些方向可以补充算力路线，不能替代守恒性、长期稳定性和目标量精度的
+检查。
+
+
+6   结论
+    泵领域高精度模拟的价值，在于将整体性能变化解释到局部分离、动静干涉、空化
+和声振传递，并用相应观测量检验计算。对已有 Fluent 设计流程，可先以 RANS 筛选方
+案，再针对受关注的非定常机制配置尺度解析计算与试验验证。本文属于代表性文献综
+述，未在统一工况下复算各模型，因此不对它们给出通用精度排名。后续应用应围绕具
+体设计目标分配分辨率与计算资源。
+
+
+参考文献
+[1] HAN Y, LIU M, TAN L. A review on the application of hybrid RANS-LES methods in
+    hydraulic machinery[J/OL]. Ocean Engineering, 2024, 305: 117943. https://www.scien
+    cedirect.com/science/article/abs/pii/S0029801824012812. DOI: 10.1016/j.oceaneng.20
+    24.117943.
+
+[2] ZHANG H X, ZHANG L P, ZHANG S H, et al. Some recent progress of high-order
+    methods on structured and unstructured grids in CARDC[J/OL]. Computers & Fluids,
+    2017, 154: 371-389. https://www.sciencedirect.com/science/article/pii/S004579301630
+    3073. DOI: 10.1016/j.compfluid.2016.10.006.
+
+
+                                         4
+[3] BOSE S T, PARK G I. Wall-Modeled Large-Eddy Simulation for Complex Turbulent
+     Flows[J/OL]. Annual Review of Fluid Mechanics, 2018, 50: 535-561. https://www.a
+     nnualreviews . org / content / journals / 10 . 1146 / annurev - fluid - 122316 - 045241. DOI:
+     10.1146/annurev-fluid-122316-045241.
+
+[4] XIAO H, CINNELLA P. Quantification of model uncertainty in RANS simulations: A
+     review[J/OL]. Progress in Aerospace Sciences, 2019, 108: 1-31. https://www.sciencedir
+     ect.com/science/article/pii/S0376042118300952. DOI: 10.1016/j.paerosci.2018.10.001.
+
+[5] KYE B, PARK K, CHOI H, et al. Flow characteristics in a volute-type centrifugal pump
+     using large eddy simulation[J/OL]. International Journal of Heat and Fluid Flow, 2018,
+     72: 52-60. https : / / www . sciencedirect . com / science / article / pii / S0142727X17311797.
+     DOI: 10.1016/j.ijheatfluidflow.2018.04.016.
+
+[6] REN Y, ZHU Z, WU D, et al. Investigation of flow separation in a centrifugal pump
+     impeller based on improved delayed detached eddy simulation method[J/OL]. Advances
+     in Mechanical Engineering, 2019, 11(12). https://journals.sagepub.com/doi/10.1177/16
+     87814019897832. DOI: 10.1177/1687814019897832.
+
+[7] POSA A. LES study on the influence of the diffuser inlet angle of a centrifugal pump
+     on pressure fluctuations[J/OL]. International Journal of Heat and Fluid Flow, 2021, 89:
+     108804. https://www.sciencedirect.com/science/article/abs/pii/S0142727X21000345.
+     DOI: 10.1016/j.ijheatfluidflow.2021.108804.
+
+[8] LI D, ZHANG N, JIANG J, et al. Numerical investigation on the unsteady vortical struc-
+     ture and pressure pulsations of a centrifugal pump with the vaned diffuser[J/OL]. Inter-
+     national Journal of Heat and Fluid Flow, 2022, 98: 109050. https://www.sciencedirect.c
+     om/science/article/abs/pii/S0142727X22001187. DOI: 10.1016/j.ijheatfluidflow.2022.1
+     09050.
+
+[9] CUI B, ZHANG Y, HUANG Y, et al. Analysis of unsteady flow and fluid exciting forces
+     of multistage centrifugal pump based on actual size[J/OL]. Proceedings of the Institution
+     of Mechanical Engineers, Part A: Journal of Power and Energy, 2022, 236(1): 21-32. htt
+     ps://journals.sagepub.com/doi/10.1177/09576509211023222. DOI: 10.1177/095765092
+     11023222.
+
+[10] 程怀玉, 季斌, 龙新平, 等. 空化对叶顶间隙泄漏涡演变特性及特征参数影响的大涡
+     模拟研究[J/OL]. 力学学报, 2021, 53(5): 1268-1287. https://pubs.cstam.org.cn/article
+
+                                                5
+      /doi/10.6052/0459-1879-20-415. DOI: 10.6052/0459-1879-20-415.
+
+[11] 郎涛, 刘玉涛, 陈刻强, 等. 离心泵水动力噪声研究综述[J/OL]. 排灌机械工程学报,
+      2021, 39(1): 8-15, 22. https://www.aeeisp.com/pgjxgcxb/article/id/e1f0567c-8ff2-44db
+      -83b5-38b03a8355f9. DOI: 10.3969/j.issn.1674-8530.19.0164.
+
+[12] 郎涛, 金力成, 刘玉涛, 等. 单叶片离心泵水动力噪声特性数值分析[J/OL]. 排灌机
+      械工程学报, 2022, 40(6): 541-548. https://zzs.ujs.edu.cn/pgjxgcxb/CN/10.3969/j.issn.1
+      674-8530.20.0358. DOI: 10.3969/j.issn.1674-8530.20.0358.
+
+[13] HE A, SHAO C. Study on the induced noise of gas–liquid two-phase flow in a centrifugal
+      pump[J/OL]. Applied Acoustics, 2021, 176: 107892. https://www.sciencedirect.com/sc
+      ience/article/pii/S0003682X20309968. DOI: 10.1016/j.apacoust.2020.107892.
+
+[14] LI K, XU W, DOU H S. Flow Stability in a Miniature Centrifugal Pump under the Peri-
+      odic Pulse Flow[J/OL]. Energies, 2021, 14(24): 8338. https://www.mdpi.com/1996-10
+      73/14/24/8338. DOI: 10.3390/en14248338.
+
+[15] KOCHKOV D, SMITH J A, ALIEVA A, et al. Machine learning-accelerated computa-
+      tional fluid dynamics[J/OL]. Proceedings of the National Academy of Sciences, 2021,
+      118(21): e2101784118. https://doi.org/10.1073/pnas.2101784118. DOI: 10.1073/pnas.2
+      101784118.
+
+[16] XUE X, WANG S, YAO H D, et al. Physics informed data-driven near-wall modelling for
+      lattice Boltzmann simulation of high Reynolds number turbulent flows[J/OL]. Commu-
+      nications Physics, 2024, 7: 338. https://www.nature.com/articles/s42005-024-01832-1.
+      DOI: 10.1038/s42005-024-01832-1.
+
+[17] SUCCI S, ITANI W, SREENIVASAN K, et al. Quantum computing for fluids: Where
+      do we stand?[J/OL]. EPL (Europhysics Letters), 2023, 144(1): 10001. https://academic
+      .oup.com/epl/article/144/1/acfdc7/8765615. DOI: 10.1209/0295-5075/acfdc7.
+
+
+
+
+                                            6
+

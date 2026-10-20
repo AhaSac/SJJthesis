@@ -1,0 +1,23 @@
+% !TEX root = ../main.tex
+% Origin图件接口：将制作好的PDF按以下文件名放入figures/即可自动插入。
+% 暂无图件时不插入占位框；图2、3尚需真实仿真时序，不预先插入。
+
+\IfFileExists{figures/fig01_grid.pdf}{%
+  图\ref{fig:grid-sensitivity}整理了微型离心泵平均性能系数的网格敏感性，展示不同目标量随网格变化的差别。
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.97\linewidth]{figures/fig01_grid.pdf}
+    \caption{微型离心泵平均性能系数的网格敏感性。据Li等\cite{Li2021PulseFlow}表3整理；相对差异以最细网格为参照，不代表真值误差或高频谱收敛。}
+    \label{fig:grid-sensitivity}
+  \end{figure}
+}{}
+
+\IfFileExists{figures/fig04_redesign.pdf}{%
+  图\ref{fig:redesign}对比了文献中叶轮改型前后的数值性能，反映设计改进在不同流量下的差异。
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.97\linewidth]{figures/fig04_redesign.pdf}
+    \caption{基于流动诊断的叶轮改型前后数值性能。据Ren等\cite{Ren2019SeparationIDDES}表3整理；效率为水力效率，不表示模型精度比较或噪声变化。}
+    \label{fig:redesign}
+  \end{figure}
+}{}

@@ -1,0 +1,37 @@
+{
+    "files.encoding": "utf8",
+    "editor.wordWrap": "on",
+    "latex-workshop.latex.outDir": "C:/Users/AhaSac/Desktop/pump/SJJthesis/20261020/build/%DOCFILE%",
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.recipe.default": "first",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "XeLaTeX + Biber (latexmk)",
+            "tools": [
+                "paper-latexmk"
+            ]
+        }
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "paper-latexmk",
+            "command": "latexmk",
+            "args": [
+                "-norc",
+                "-cd",
+                "-xelatex",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "-halt-on-error",
+                "-outdir=%OUTDIR%",
+                "%DOC%"
+            ],
+            "env": {
+                "LC_ALL": "C",
+                "LANG": "C"
+            }
+        }
+    ]
+}
